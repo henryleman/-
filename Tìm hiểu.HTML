@@ -1,43 +1,14 @@
-# main.py
 import requests
-from datetime import datetime
 
-def get_ai_report():
-    now = datetime.now().strftime("%d/%m/%Y %H:%M")
-    # Đây là bản mẫu báo cáo đơn giản – sẽ được thay bằng AI sau
-    report = f"""
-📅 [AI REPORT - {now}]
-🌍 Thị trường hôm nay:
-- CPI Mỹ tăng cao → USD mạnh lên
-- Chiến sự leo thang ở Trung Đông
+webhook_url = "https://discord.com/api/webhooks/...."  # Dán URL của bạn vào đây
 
-💱 Forex:
-- XAUUSD: Bearish 🔻 (USD tăng, MACD cắt xuống)
-- EURUSD: Neutral 🟡
+message = {
+    "content": "📈 Xin chào! Boy đã gửi tin nhắn thành công từ Discord Webhook 🚀"
+}
 
-🪙 Crypto:
-- BTC: Bullish 🔼 (tin tích cực từ ETF spot)
-- ETH: Sideway 🔄
+response = requests.post(webhook_url, json=message)
 
-📈 Chỉ báo kỹ thuật:
-- XAUUSD MACD: cắt xuống
-- BTC RSI: 61 → breakout nhẹ
-
-🧠 GPT Sentiment:
-- Vàng: Tiêu cực
-- BTC: Tích cực
-    """
-    return report
-
-def send_to_discord(webhook_url, message):
-    payload = {"content": message}
-    response = requests.post(webhook_url, json=payload)
-    if response.status_code == 204:
-        print("✅ Gửi thành công!")
-    else:
-        print(f"❌ Lỗi gửi: {response.status_code}")
-
-if __name__ == "__main__":
-    webhook_url = "https://discord.com/api/webhooks/1382589247852118138/5z-9mxCDYzPamITwnh0mjnIjd1gLigsuQAHGx0oNA8C6Jhpcq49U1_FIeIvd2WjTFaSh"
-    report = get_ai_report()
-    send_to_discord(webhook_url, report)
+if response.status_code == 204:
+    print("✅ Gửi thành công!")
+else:
+    print(f"❌ Lỗi gửi: {response.status_code}")
