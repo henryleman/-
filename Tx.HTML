@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tool Phân Tích Tài Xỉu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f8f8f8; }
+    h2 { text-align: center; }
+    .buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+    button { flex: 1 1 30%; padding: 12px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; }
+    .tai { background: #e67e22; color: white; }
+    .xiu { background: #2980b9; color: white; }
+    .clear { background: #7f8c8d; color: white; flex: 1 1 100%; }
+    #sequence { margin: 10px 0; font-size: 18px; text-align: center; }
+    #output { font-weight: bold; background: white; padding: 15px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h2>🎲 Tool Tài Xỉu (Phân tích & Dự đoán)</h2>
+
+  <div class="buttons">
+    <button class="tai" onclick="addResult('Tài')">🟠 Tài</button>
+    <button class="xiu" onclick="addResult('Xỉu')">🔵 Xỉu</button>
+    <button class="clear" onclick="clearData()">🗑️ Xóa</button>
+  </div>
+
+  <div id="sequence">Chuỗi: (trống)</div>
+  <div id="output"></div>
+
+  <script>
+    let results = [];
+
+    function updateDisplay() {
+      const total = results.length;
+      const countTai = results.filter(r => r === 'Tài').length;
+      const countXiu = results.filter(r => r === 'Xỉu').length;
+
+      const percentTai = total ? ((countTai / total) * 100).toFixed(1) : 0;
+      const percentXiu = total ? ((countXiu / total) * 100).toFixed(1) : 0;
+
+      const sequenceText = results.join(' ') || "(trống)";
+      document.getElementById("sequence").innerText = "Chuỗi: " + sequenceText;
+
+      // Soi xu hướng gần nhất
+      let trend = "Không rõ xu hướng";
+      if (total >= 3) {
+        let last3 = results.slice(-3);
+        if (last3.every(r => r === 'Tài')) trend = "Đang chuỗi Tài 🔥";
+        else if (last3.every(r => r === 'Xỉu')) trend = "Đang chuỗi Xỉu ❄️";
+        else if (last3.join('') === 'TàiXỉuTài') trend = "Có thể là Xỉu tiếp?";
+        else if (last3.join('') === 'XỉuTàiXỉu') trend = "Có thể là Tài tiếp?";
+      }
+
+      // Dự đoán
+      let predict = "";
+      if (countTai > countXiu) predict = "🔮 Dự đoán: Tài 🟠";
+      else if (countXiu > countTai) predict = "🔮 Dự đoán: Xỉu 🔵";
+      else predict = "🔮 Dự đoán: Khó đoán ⚪";
+
+      document.getElementById("output").innerHTML = `
+        🎯 Tổng ván: ${total}<br>
+        🟠 Tài: ${countTai} (${percentTai}%)<br>
+        🔵 Xỉu: ${countXiu} (${percentXiu}%)<br><br>
+        📈 ${trend}<br>
+        💡 ${predict}
+      `;
+    }
+
+    function addResult(value) {
+      results.push(value);
+      updateDisplay();
+    }
+
+    function clearData() {
+      results = [];
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
