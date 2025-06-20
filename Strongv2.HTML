@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tool Baccarat Full (B/P/T)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f1f1f1; }
+    h2 { text-align: center; }
+    .buttons { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    button { flex: 1 1 30%; padding: 12px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; }
+    .banker { background: #e74c3c; color: white; }
+    .player { background: #3498db; color: white; }
+    .tie    { background: #2ecc71; color: white; }
+    .clear  { background: #95a5a6; color: white; flex: 1 1 100%; }
+    #sequence { margin-top: 15px; font-size: 18px; text-align: center; }
+    #output { margin-top: 20px; font-weight: bold; font-size: 17px; background: white; padding: 15px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h2>🎲 Tool Phân Tích Baccarat (Full B / P / T)</h2>
+
+  <div class="buttons">
+    <button class="banker" onclick="addResult('B')">🔴 Banker</button>
+    <button class="player" onclick="addResult('P')">🔵 Player</button>
+    <button class="tie"    onclick="addResult('T')">🟢 Tie</button>
+    <button class="clear"  onclick="clearData()">🗑️ Xóa</button>
+  </div>
+
+  <div id="sequence">Chuỗi: (trống)</div>
+  <div id="output"></div>
+
+  <script>
+    let results = [];
+
+    function updateDisplay() {
+      const total = results.length;
+      const countB = results.filter(x => x === 'B').length;
+      const countP = results.filter(x => x === 'P').length;
+      const countT = results.filter(x => x === 'T').length;
+
+      const percentB = total ? ((countB / total) * 100).toFixed(1) : 0;
+      const percentP = total ? ((countP / total) * 100).toFixed(1) : 0;
+      const percentT = total ? ((countT / total) * 100).toFixed(1) : 0;
+
+      let sequenceText = results.join(" ") || "(trống)";
+      document.getElementById("sequence").innerText = "Chuỗi: " + sequenceText;
+
+      // Phân tích chuỗi xu hướng
+      let trend = "Không rõ xu hướng";
+      if (total >= 3) {
+        let last3 = results.slice(-3).join('');
+        if (last3 === 'BBB') trend = "Xu hướng Banker mạnh 🔴";
+        else if (last3 === 'PPP') trend = "Xu hướng Player mạnh 🔵";
+        else if (last3 === 'TTT') trend = "Xu hướng Hòa mạnh 🟢";
+        else if (/^(BP){2,}$/.test(results.slice(-4).join(''))) trend = "Lặp kiểu BP → có thể là Banker 🔄";
+        else if (/^(PB){2,}$/.test(results.slice(-4).join(''))) trend = "Lặp kiểu PB → có thể là Player 🔄";
+      }
+
+      // Dự đoán đơn giản
+      let max = Math.max(countB, countP, countT);
+      let predict = "🔮 Dự đoán: ";
+      if (max === countB) predict += "Banker 🔴";
+      else if (max === countP) predict += "Player 🔵";
+      else predict += "Hòa 🟢";
+
+      document.getElementById("output").innerHTML = `
+        🔢 Tổng ván: ${total}<br>
+        🔴 Banker: ${countB} (${percentB}%)<br>
+        🔵 Player: ${countP} (${percentP}%)<br>
+        🟢 Tie: ${countT} (${percentT}%)<br><br>
+        📈 ${trend}<br>
+        💡 ${predict}
+      `;
+    }
+
+    function addResult(value) {
+      results.push(value);
+      updateDisplay();
+    }
+
+    function clearData() {
+      results = [];
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
