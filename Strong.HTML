@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tool Baccarat Nâng Cấp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #eaeaea; }
+    h2 { text-align: center; }
+    .buttons { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    button { flex: 1; padding: 12px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
+    .banker { background: #e74c3c; color: white; }
+    .player { background: #3498db; color: white; }
+    .clear { background: #95a5a6; color: white; }
+    #sequence { margin-top: 15px; font-size: 18px; text-align: center; }
+    #output { margin-top: 20px; font-weight: bold; font-size: 17px; background: white; padding: 15px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h2>🎲 Tool Phân Tích Baccarat (Nâng Cấp)</h2>
+
+  <div class="buttons">
+    <button class="banker" onclick="addResult('B')">🔴 Banker</button>
+    <button class="player" onclick="addResult('P')">🔵 Player</button>
+    <button class="clear" onclick="clearData()">🗑️ Xóa</button>
+  </div>
+
+  <div id="sequence">Chuỗi: (trống)</div>
+  <div id="output"></div>
+
+  <script>
+    let results = [];
+
+    function updateDisplay() {
+      const total = results.length;
+      const countB = results.filter(x => x === 'B').length;
+      const countP = results.filter(x => x === 'P').length;
+      const percentB = total ? ((countB / total) * 100).toFixed(1) : 0;
+      const percentP = total ? ((countP / total) * 100).toFixed(1) : 0;
+      let sequenceText = results.join(" ") || "(trống)";
+      document.getElementById("sequence").innerText = "Chuỗi: " + sequenceText;
+
+      // Soi chuỗi gần nhất
+      let trend = "Không rõ xu hướng";
+      if (total >= 3) {
+        let last3 = results.slice(-3).join('');
+        if (last3 === 'BBB') trend = "Xu hướng Banker mạnh 🔴";
+        else if (last3 === 'PPP') trend = "Xu hướng Player mạnh 🔵";
+        else if (/^(BP){2,}$/.test(results.slice(-4).join(''))) trend = "Lặp kiểu BP → có thể là Banker 🔄";
+        else if (/^(PB){2,}$/.test(results.slice(-4).join(''))) trend = "Lặp kiểu PB → có thể là Player 🔄";
+      }
+
+      // Dự đoán tổng hợp
+      let predict = "";
+      if (countB > countP) predict = "🔮 Dự đoán: Banker";
+      else if (countP > countB) predict = "🔮 Dự đoán: Player";
+      else predict = "🔮 Dự đoán: Khó đoán";
+
+      document.getElementById("output").innerHTML = `
+        🔢 Số ván: ${total}<br>
+        🔴 Banker: ${countB} (${percentB}%)<br>
+        🔵 Player: ${countP} (${percentP}%)<br><br>
+        📈 ${trend}<br>
+        💡 ${predict}
+      `;
+    }
+
+    function addResult(value) {
+      results.push(value);
+      updateDisplay();
+    }
+
+    function clearData() {
+      results = [];
+      updateDisplay();
+    }
+
+    // Khởi động lần đầu
+    updateDisplay();
+  </script>
+</body>
+</html>
